@@ -37,12 +37,12 @@ public class BotController {
             @Override
             public void run() {
                 try {
-                    LocalTime now = LocalTime.now();
-                    if (now.isAfter(BOOKING_END_TIME)) {
+                    if (LocalTime.now().isAfter(BOOKING_END_TIME)) {
                         cancel();
                     }
                     boolean isBooked = botService.bookCourt(startTime, transformedPlayingDate);
                     if (isBooked) {
+                        System.out.println("Booking successful!");
                         cancel();
                     }
                 } catch (InterruptedException e) {
