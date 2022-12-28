@@ -3,6 +3,7 @@ package com.example.blauhofbot.Service;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -22,8 +23,10 @@ public class BotService {
 
     public boolean bookCourt(int startTime, LocalDate playingDate) throws InterruptedException {
         // Setup webdriver
-        System.setProperty("webdriver.chrome.driver", "/home/michael/dev/python/chromedriver");
-        WebDriver driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.driver", env.getProperty("chromium.webdriver.path"));
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        WebDriver driver = new ChromeDriver(chromeOptions);
         try {
             driver.get("https://rothof.de/online-buchen/");
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -78,7 +81,6 @@ public class BotService {
 
             // Click on book now button
             WebElement bookNowElement = wait.until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue-with-cash']")));
-            System.out.println(bookNowElement.getText());
             bookNowElement.click();
 
             // Close browser
@@ -87,6 +89,7 @@ public class BotService {
         } catch (Exception e) {
             // Close browser
             driver.quit();
+            System.out.println("Booking not successful - will perhaps try again!");
             return false;
         }
     }
