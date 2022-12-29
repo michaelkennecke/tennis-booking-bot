@@ -52,11 +52,13 @@ public class BotController {
         };
         this.courtBookingTasks.put(playingDate, courtBookingTask);
         Timer timer = new Timer("BookingTimer");
-        if (Duration.between(bookingDate.atStartOfDay(), transformedPlayingDate.atStartOfDay()).toDays() <= 7) {
-            LocalDateTime today = LocalDate.now().atTime(BOOKING_START_TIME);
-            timer.scheduleAtFixedRate(courtBookingTask, Date.from(today.atZone(ZoneId.systemDefault()).toInstant()), 300000);
+        LocalDate today = LocalDate.now();
+        LocalDateTime todayTime = today.atTime(BOOKING_START_TIME);
+        var timeBetween = Duration.between(today.atStartOfDay(), transformedPlayingDate.atStartOfDay()).toDays();
+        if (timeBetween < 7) {
+            timer.scheduleAtFixedRate(courtBookingTask, Date.from(todayTime.atZone(ZoneId.systemDefault()).toInstant()), 300000);
         } else {
-            timer.scheduleAtFixedRate(courtBookingTask, transformedBookingDate, 60000);
+           timer.scheduleAtFixedRate(courtBookingTask, transformedBookingDate, 60000);
         }
         return ResponseEntity.ok()
                 .body("Created booking task (" +
