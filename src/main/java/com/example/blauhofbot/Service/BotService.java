@@ -1,6 +1,7 @@
 package com.example.blauhofbot.Service;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -38,14 +39,12 @@ public class BotService {
             // Switch to iFrame
             driver.switchTo().frame(driver.findElement(By.tagName("iFrame")));
 
-            // Click on datepicker
+            // Click on datepicker and enter the playing date
             WebElement datepickerElement = driver.findElement(By.id("datepicker"));
             datepickerElement.click();
-
-            // Click on the correct date in the datepicker
-            int playingDay = playingDate.getDayOfMonth();
-            WebElement bookingDateElement = driver.findElement(By.linkText(String.valueOf(playingDay)));
-            bookingDateElement.click();
+            datepickerElement.clear();
+            datepickerElement.sendKeys(playingDate.getDayOfMonth() + "/" + playingDate.getMonthValue() + "/" + playingDate.getYear());
+            datepickerElement.sendKeys(Keys.RETURN);
 
             // Select the next free court at the specified time
             Thread.sleep(2000); // TODO: change waiting time
