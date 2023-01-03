@@ -1,36 +1,31 @@
-package com.example.blauhofbot.Service;
+package com.example.blauhofbot.Bot;
 
+import com.example.blauhofbot.Model.Booking;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
-import org.openqa.selenium.WebDriver;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.time.LocalDate;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 
-@Service
-public class BotService {
+@Component
+public class RothofBookingBot extends BookingBot {
 
-    @Autowired
-    private Environment env;
+    public RothofBookingBot(Environment environment) {
+        super(environment);
+    }
 
-    public boolean bookCourt(int startTime, LocalDate playingDate) throws InterruptedException {
-        // Setup webdriver
-        System.setProperty("webdriver.chrome.driver", env.getProperty("chromium.webdriver.path"));
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-        WebDriver driver = new ChromeDriver(chromeOptions);
+    @Override
+    public boolean book(Booking booking) {
         try {
+            driver = new ChromeDriver(chromeOptions);
+            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             driver.get("https://rothof.de/online-buchen/");
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
             // Accept cookies
             WebElement cookiesElement = driver.findElement(By.id("CookieBoxSaveButton"));
@@ -43,12 +38,20 @@ public class BotService {
             WebElement datepickerElement = driver.findElement(By.id("datepicker"));
             datepickerElement.click();
             datepickerElement.clear();
-            datepickerElement.sendKeys(playingDate.getDayOfMonth() + "/" + playingDate.getMonthValue() + "/" + playingDate.getYear());
+            datepickerElement.sendKeys(
+                    booking.getLocalDateTimeOfEvent().getDayOfMonth() + "/" +
+                            booking.getLocalDateTimeOfEvent().getMonthValue() + "/" +
+                            booking.getLocalDateTimeOfEvent().getYear()
+            );
             datepickerElement.sendKeys(Keys.RETURN);
 
             // Select the next free court at the specified time
             Thread.sleep(2000); // TODO: change waiting time
-            this.selectFreeCourt(driver, startTime);
+            int startTime = booking.getLocalDateTimeOfEvent().getHour();
+            int endTime = startTime + 1;
+            WebElement courtElement = driver
+                    .findElement(By.xpath(String.format("//td[@data-original-title='Free | %s - %s']", this.timeAsText(startTime), this.timeAsText(endTime))));
+            courtElement.click();
 
             // Wait until new tab has been loaded
             wait.until(numberOfWindowsToBe(2));
@@ -64,11 +67,11 @@ public class BotService {
 
             // Enter email
             WebElement emailElement = driver.findElement(By.name("email"));
-            emailElement.sendKeys(env.getProperty("eversports.username"));
+            emailElement.sendKeys(environment.getProperty("eversports.username"));
 
             // Enter password
             WebElement passwordElement = driver.findElement(By.name("password"));
-            passwordElement.sendKeys(env.getProperty("eversports.password"));
+            passwordElement.sendKeys(environment.getProperty("eversports.password"));
 
             // Click on login button
             WebElement loginElement = driver.findElement(By.xpath("//button[@data-testid='login']"));
@@ -91,13 +94,6 @@ public class BotService {
             System.out.println("Booking not successful - will perhaps try again!");
             return false;
         }
-    }
-
-    private void selectFreeCourt(WebDriver driver, int startTime) {
-        int endTime = startTime + 1;
-        WebElement courtElement = driver
-                .findElement(By.xpath(String.format("//td[@data-original-title='Free | %s - %s']", timeAsText(startTime), timeAsText(endTime))));
-        courtElement.click();
     }
 
     private String timeAsText(int time) {
