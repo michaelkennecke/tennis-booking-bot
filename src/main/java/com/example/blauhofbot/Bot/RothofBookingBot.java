@@ -22,6 +22,7 @@ public class RothofBookingBot extends BookingBot {
 
     @Override
     public boolean book(Booking booking) {
+        booking.setBookingAttempts(booking.getBookingAttempts() + 1);
         try {
             driver = new ChromeDriver(chromeOptions);
             wait = new WebDriverWait(driver, Duration.ofSeconds(10));
