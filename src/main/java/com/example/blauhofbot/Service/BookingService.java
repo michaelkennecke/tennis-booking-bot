@@ -1,12 +1,13 @@
 package com.example.blauhofbot.Service;
 
 import java.time.LocalDateTime;
-import java.util.Timer;
 
 public interface BookingService {
-    Timer timer = new Timer("BookingTimer"); //todo: make naming dynamic
 
-    void createBooking(LocalDateTime dateOfEvent);
+    void createBooking(LocalDateTime localDateTimeOfEvent,
+                       LocalDateTime localDateTimeOfBookingStart,
+                       LocalDateTime localDateTimeOfBookingEnd
+    );
 
-    // todo: deleteBooking
+    boolean deleteBooking(LocalDateTime localDateTimeOfEvent);
 }

@@ -8,56 +8,45 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.Date;
+import java.util.Timer;
 
 @Service
 public class RothofBookingService implements BookingService {
+    private final RothofBookingBot rothofBookingBot;
 
-    private RothofBookingBot rothofBookingBot;
-
-    public RothofBookingService(RothofBookingBot rothofBookingBot) {
+    RothofBookingService(RothofBookingBot rothofBookingBot) {
         this.rothofBookingBot = rothofBookingBot;
     }
 
     @Override
-    public void createBooking(LocalDateTime localDateTimeOfEvent) {
-        RothofBookingTimerTask rothofBookingTimerTask = new RothofBookingTimerTask(this.rothofBookingBot);
-        if (this.canBookImmediately(localDateTimeOfEvent)) {
-            LocalDateTime localDateTimeOfBooking = LocalDate.now().atTime(Database.bookingStartTime);
-            Booking booking = Booking.builder()
-                    .localDateTimeOfEvent(localDateTimeOfEvent)
-                    .localDateTimeOfBooking(localDateTimeOfBooking)
-                    .bookingStatus(Booking.BookingStatus.CREATED)
-                    .timerTask(rothofBookingTimerTask)
-                    .build();
-            Database.bookings.put(booking.getLocalDateTimeOfEvent(), booking);
-            rothofBookingTimerTask.setBooking(booking);
-            timer.schedule(
-                    rothofBookingTimerTask,
-                    Date.from(localDateTimeOfBooking.atZone(ZoneId.systemDefault()).toInstant())
-            );
-        } else {
-            LocalDateTime localDateTimeOfBooking = localDateTimeOfEvent.toLocalDate().minusDays(7).atTime(Database.bookingStartTime);
-            Booking booking = Booking.builder()
-                    .localDateTimeOfEvent(localDateTimeOfEvent)
-                    .localDateTimeOfBooking(localDateTimeOfBooking)
-                    .bookingStatus(Booking.BookingStatus.CREATED)
-                    .timerTask(rothofBookingTimerTask)
-                    .build();
-            Database.bookings.put(booking.getLocalDateTimeOfEvent(), booking);
-            rothofBookingTimerTask.setBooking(booking);
-            timer.scheduleAtFixedRate(
-                    rothofBookingTimerTask,
-                    Date.from(localDateTimeOfBooking.atZone(ZoneId.systemDefault()).toInstant()),
-                    60000
-            );
-        }
+    public void createBooking(LocalDateTime localDateTimeOfEvent,
+                              LocalDateTime localDateTimeOfBookingStart,
+                              LocalDateTime localDateTimeOfBookingEnd) {
+        Booking booking = Booking.builder()
+                .localDateTimeOfEvent(localDateTimeOfEvent)
+                .localDateTimeOfBookingStart(localDateTimeOfBookingStart)
+                .localDateTimeOfBookingEnd(localDateTimeOfBookingEnd)
+                .bookingStatus(Booking.BookingStatus.CREATED)
+                .build();
+        RothofBookingTimerTask rothofBookingTimerTask = new RothofBookingTimerTask(booking, this.rothofBookingBot);
+        booking.setTimerTask(rothofBookingTimerTask);
+        Database.bookings.put(booking.getLocalDateTimeOfEvent(), booking);
+        Timer timer = new Timer("RothofBookingTimer");
+        timer.scheduleAtFixedRate(
+                rothofBookingTimerTask,
+                Date.from(localDateTimeOfBookingStart.atZone(ZoneId.systemDefault()).toInstant()),
+                300000
+        );
     }
 
-    private boolean canBookImmediately(LocalDateTime localDateTimeOfEvent) {
-        long daysBetweenTodayAndEvent = Duration.between(
-                LocalDate.now().atStartOfDay(),
-                localDateTimeOfEvent.toLocalDate().atStartOfDay()
-        ).toDays();
-        return daysBetweenTodayAndEvent < 7;
+    @Override
+    public boolean deleteBooking(LocalDateTime localDateTimeOfEvent) {
+        try {
+            Database.bookings.get(localDateTimeOfEvent).getTimerTask().cancel();
+            Database.bookings.remove(localDateTimeOfEvent);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
