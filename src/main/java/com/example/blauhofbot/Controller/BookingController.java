@@ -24,31 +24,30 @@ public class BookingController {
                 .body(Database.bookings);
     }
 
-    @PostMapping("/booking/{dateTimeOfEvent}")
-    public ResponseEntity<String> createBooking(@PathVariable("dateTimeOfEvent") String userInputDateTimeOfEvent) {
+    @PostMapping("/booking/{dateTimeOfEvent}/{dateTimeOfBookingStart}/{dateTimeOfBookingEnd}")
+    public ResponseEntity<String> createBooking(@PathVariable("dateTimeOfEvent") String userInputDateTimeOfEvent,
+                                                @PathVariable("dateTimeOfBookingStart") String userInputDateTimeOfBookingStart,
+                                                @PathVariable("dateTimeOfBookingEnd") String userInputDateTimeOfBookingEnd) {
         LocalDateTime localDateTimeOfEvent = LocalDateTime.parse(userInputDateTimeOfEvent);
-        this.bookingService.createBooking(localDateTimeOfEvent);
+        LocalDateTime localDateTimeOfBookingStart = userInputDateTimeOfBookingStart.equals("now") ?
+                LocalDateTime.now() : LocalDateTime.parse(userInputDateTimeOfBookingStart);
+        LocalDateTime localDateTimeOfBookingEnd = userInputDateTimeOfBookingEnd.equals("now") ?
+                LocalDateTime.now().plusSeconds(10) : LocalDateTime.parse(userInputDateTimeOfBookingEnd);
+        this.bookingService.createBooking(localDateTimeOfEvent, localDateTimeOfBookingStart, localDateTimeOfBookingEnd);
         return ResponseEntity.ok()
                 .body("Created booking task (" +
-                        "Date of event: " + localDateTimeOfEvent + ", " + ")"
+                        "Date of event: " + localDateTimeOfEvent + ", " +
+                        "Start booking: " + localDateTimeOfBookingStart + ", " +
+                        "End booking: " + localDateTimeOfBookingEnd +
+                        ")"
                 );
     }
 
     @DeleteMapping("/booking/{dateTimeOfEvent}")
     public ResponseEntity<String> cancelBooking(@PathVariable("dateTimeOfEvent") String userInputDateTimeOfEvent) {
         LocalDateTime localDateTimeOfEvent = LocalDateTime.parse(userInputDateTimeOfEvent);
-        Database.bookings.get(localDateTimeOfEvent).getTimerTask().cancel();
-        Database.bookings.remove(localDateTimeOfEvent);
+        this.bookingService.deleteBooking(localDateTimeOfEvent);
         return ResponseEntity.ok()
-                .body("Booking for " + localDateTimeOfEvent + " deleted!");
+                .body("Booking task for " + localDateTimeOfEvent + " deleted!");
     }
-
-    @PostMapping("/updateBookingTimeWindow/{startTime}/{endTime}")
-    public ResponseEntity<String> updateBookingTimeWindow(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime) {
-        Database.bookingStartTime = LocalTime.parse(startTime);
-        Database.bookingEndTime = LocalTime.parse(endTime);
-        return ResponseEntity.ok()
-                .body("new start time: " + Database.bookingStartTime + ", new end time: " + Database.bookingEndTime);
-    }
-
 }

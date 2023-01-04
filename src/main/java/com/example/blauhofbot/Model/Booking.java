@@ -13,14 +13,16 @@ import java.util.TimerTask;
 @NoArgsConstructor
 public class Booking {
     private LocalDateTime localDateTimeOfEvent;
-    private LocalDateTime localDateTimeOfBooking;
+    private LocalDateTime localDateTimeOfBookingStart;
+    private LocalDateTime localDateTimeOfBookingEnd;
     private BookingStatus bookingStatus;
     private TimerTask timerTask;
 
     @Builder
-    public Booking(LocalDateTime localDateTimeOfEvent, LocalDateTime localDateTimeOfBooking, BookingStatus bookingStatus, TimerTask timerTask) {
+    public Booking(LocalDateTime localDateTimeOfEvent, LocalDateTime localDateTimeOfBookingStart, LocalDateTime localDateTimeOfBookingEnd, BookingStatus bookingStatus, TimerTask timerTask) {
         this.localDateTimeOfEvent = localDateTimeOfEvent;
-        this.localDateTimeOfBooking = localDateTimeOfBooking;
+        this.localDateTimeOfBookingStart = localDateTimeOfBookingStart;
+        this.localDateTimeOfBookingEnd = localDateTimeOfBookingEnd;
         this.bookingStatus = bookingStatus;
         this.timerTask = timerTask;
     }
