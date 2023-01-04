@@ -91,7 +91,6 @@ public class RothofBookingBot extends BookingBot {
         } catch (Exception e) {
             // Close browser
             driver.quit();
-            System.out.println("Booking not successful - will perhaps try again!");
             return false;
         }
     }
