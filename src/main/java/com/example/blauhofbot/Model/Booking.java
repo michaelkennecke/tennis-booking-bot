@@ -17,6 +17,7 @@ public class Booking {
     private LocalDateTime localDateTimeOfBookingEnd;
     private BookingStatus bookingStatus;
     private TimerTask timerTask;
+    private int bookingAttempts;
 
     @Builder
     public Booking(LocalDateTime localDateTimeOfEvent, LocalDateTime localDateTimeOfBookingStart, LocalDateTime localDateTimeOfBookingEnd, BookingStatus bookingStatus, TimerTask timerTask) {
@@ -25,6 +26,7 @@ public class Booking {
         this.localDateTimeOfBookingEnd = localDateTimeOfBookingEnd;
         this.bookingStatus = bookingStatus;
         this.timerTask = timerTask;
+        this.bookingAttempts = 0;
     }
 
     public enum BookingStatus {
