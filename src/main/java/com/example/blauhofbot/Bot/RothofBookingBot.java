@@ -1,10 +1,9 @@
 package com.example.blauhofbot.Bot;
 
 import com.example.blauhofbot.Model.Booking;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -46,8 +45,10 @@ public class RothofBookingBot extends BookingBot {
             );
             datepickerElement.sendKeys(Keys.RETURN);
 
-            // Select the next free court at the specified time
-            Thread.sleep(2000); // TODO: change waiting time
+            // Wait until booking table is visible Select
+            WebElement foo = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[@data-original-title='Free | 23:00 - 00:00']")));
+
+            // Book the next free court at the specified time
             int startTime = booking.getLocalDateTimeOfEvent().getHour();
             int endTime = startTime + 1;
             WebElement courtElement = driver
@@ -89,7 +90,7 @@ public class RothofBookingBot extends BookingBot {
             // Close browser
             driver.quit();
             return true;
-        } catch (Exception e) {
+        } catch (WebDriverException e) {
             // Close browser
             driver.quit();
             return false;
