@@ -46,14 +46,13 @@ public class RothofBookingBot extends BookingBot {
             datepickerElement.sendKeys(Keys.RETURN);
 
             // Wait until booking table is visible Select
-            WebElement foo = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[@data-original-title='Free | 23:00 - 00:00']")));
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[@data-original-title='Free | 23:00 - 00:00']")));
 
             // Book the next free court at the specified time
             int startTime = booking.getLocalDateTimeOfEvent().getHour();
             int endTime = startTime + 1;
-            WebElement courtElement = driver
-                    .findElement(By.xpath(String.format("//td[@data-original-title='Free | %s - %s']", this.timeAsText(startTime), this.timeAsText(endTime))));
-            courtElement.click();
+            String usDateFormatOEventDate = booking.getLocalDateTimeOfEvent().toLocalDate().toString();
+            driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime)))).click();
 
             // Wait until new tab has been loaded
             wait.until(numberOfWindowsToBe(2));
@@ -85,7 +84,7 @@ public class RothofBookingBot extends BookingBot {
 
             // Click on book now button
             WebElement bookNowElement = wait.until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue-with-cash']")));
-            bookNowElement.click();
+            // bookNowElement.click();
 
             // Close browser
             driver.quit();
