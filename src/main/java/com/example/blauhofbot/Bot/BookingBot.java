@@ -15,7 +15,8 @@ public abstract class BookingBot {
 
     public BookingBot(Environment environment) {
         this.environment = environment;
-        System.setProperty("webdriver.chrome.driver", environment.getProperty("chromium.webdriver.path"));
+        // System.setProperty("webdriver.chrome.driver", environment.getProperty("chromium.webdriver.path"));
+        WebDriverManager.chromiumdriver().setup();
         this.chromeOptions = new ChromeOptions();
         this.chromeOptions.addArguments("--headless");
     }
