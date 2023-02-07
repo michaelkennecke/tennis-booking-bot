@@ -1,13 +1,17 @@
 package com.example.blauhofbot.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 public interface BookingService {
 
-    void createBooking(LocalDateTime localDateTimeOfEvent,
+    void createBooking(LocalDate localDateOfEvent,
                        LocalDateTime localDateTimeOfBookingStart,
-                       LocalDateTime localDateTimeOfBookingEnd
+                       LocalDateTime localDateTimeOfBookingEnd,
+                       List<LocalTime> preferences
     );
 
-    boolean deleteBooking(LocalDateTime localDateTimeOfEvent);
+    boolean deleteBooking(LocalDate localDateOfEvent);
 }

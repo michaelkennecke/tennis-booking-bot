@@ -9,6 +9,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.LocalTime;
+import java.util.List;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 
@@ -39,9 +41,9 @@ public class RothofBookingBot extends BookingBot {
             datepickerElement.click();
             datepickerElement.clear();
             datepickerElement.sendKeys(
-                    booking.getLocalDateTimeOfEvent().getDayOfMonth() + "/" +
-                            booking.getLocalDateTimeOfEvent().getMonthValue() + "/" +
-                            booking.getLocalDateTimeOfEvent().getYear()
+                    booking.getLocalDateOfEvent().getDayOfMonth() + "/" +
+                            booking.getLocalDateOfEvent().getMonthValue() + "/" +
+                            booking.getLocalDateOfEvent().getYear()
             );
             datepickerElement.sendKeys(Keys.RETURN);
 
@@ -49,10 +51,8 @@ public class RothofBookingBot extends BookingBot {
             wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[@data-original-title='Free | 23:00 - 00:00']")));
 
             // Book the next free court at the specified time
-            int startTime = booking.getLocalDateTimeOfEvent().getHour();
-            int endTime = startTime + 1;
-            String usDateFormatOEventDate = booking.getLocalDateTimeOfEvent().toLocalDate().toString();
-            driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime)))).click();
+            WebElement courtElement = this.getFreeCourt(booking.getPreferences(), booking.getLocalDateOfEvent().toString());
+            courtElement.click();
 
             // Wait until new tab has been loaded
             wait.until(numberOfWindowsToBe(2));
@@ -65,6 +65,10 @@ public class RothofBookingBot extends BookingBot {
                     break;
                 }
             }
+            // Accept all cookies
+            WebElement cookies = driver.findElement(By.xpath("//button[@data-testid='accept-all-cookies']"));
+            // wait.until(webDriver -> webDriver.findElement())
+            cookies.click();
 
             // Enter email
             WebElement emailElement = driver.findElement(By.name("email"));
@@ -84,16 +88,34 @@ public class RothofBookingBot extends BookingBot {
 
             // Click on book now button
             WebElement bookNowElement = wait.until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue-with-cash']")));
-            // bookNowElement.click();
+            bookNowElement.click();
 
             // Close browser
             driver.quit();
             return true;
-        } catch (WebDriverException e) {
+        } catch (Exception e) {
             // Close browser
+            driver.close();
             driver.quit();
             return false;
         }
+    }
+
+    private WebElement getFreeCourt(List<LocalTime> preferences, String usDateFormatOEventDate) {
+        for (var preference : preferences) {
+            int startTime = preference.getHour();
+            int endTime = startTime + 1;
+            WebElement courtElement;
+            try {
+                courtElement = driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime))));
+            } catch (WebDriverException e) {
+                continue;
+            }
+            if (courtElement.isDisplayed()) {
+                return courtElement;
+            }
+        }
+        return null;
     }
 
     private String timeAsText(int time) {

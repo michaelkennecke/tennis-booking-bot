@@ -19,14 +19,14 @@ public class RothofBookingTimerTask extends TimerTask {
     public void run() {
         if (LocalDateTime.now().isAfter(this.booking.getLocalDateTimeOfBookingEnd())) {
             System.out.println("Booking not successful!");
-            Database.bookings.get(this.booking.getLocalDateTimeOfEvent()).setBookingStatus(Booking.BookingStatus.CANCELED);
+            Database.bookings.get(this.booking.getLocalDateOfEvent()).setBookingStatus(Booking.BookingStatus.CANCELED);
             cancel();
             return;
         }
         boolean isBooked = this.rothofBookingBot.book(this.booking);
         if (isBooked) {
             System.out.println("Booking successful!");
-            Database.bookings.get(this.booking.getLocalDateTimeOfEvent()).setBookingStatus(Booking.BookingStatus.SUCCESSFUL);
+            Database.bookings.get(this.booking.getLocalDateOfEvent()).setBookingStatus(Booking.BookingStatus.SUCCESSFUL);
             cancel();
         }
     }
