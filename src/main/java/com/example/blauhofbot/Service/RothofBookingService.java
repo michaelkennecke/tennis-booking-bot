@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 
 @Service
@@ -19,31 +20,33 @@ public class RothofBookingService implements BookingService {
     }
 
     @Override
-    public void createBooking(LocalDateTime localDateTimeOfEvent,
+    public void createBooking(LocalDate localDateOfEvent,
                               LocalDateTime localDateTimeOfBookingStart,
-                              LocalDateTime localDateTimeOfBookingEnd) {
+                              LocalDateTime localDateTimeOfBookingEnd,
+                              List<LocalTime> preferences) {
         Booking booking = Booking.builder()
-                .localDateTimeOfEvent(localDateTimeOfEvent)
+                .localDateOfEvent(localDateOfEvent)
                 .localDateTimeOfBookingStart(localDateTimeOfBookingStart)
                 .localDateTimeOfBookingEnd(localDateTimeOfBookingEnd)
+                .preferences(preferences)
                 .bookingStatus(Booking.BookingStatus.CREATED)
                 .build();
         RothofBookingTimerTask rothofBookingTimerTask = new RothofBookingTimerTask(booking, this.rothofBookingBot);
         booking.setTimerTask(rothofBookingTimerTask);
-        Database.bookings.put(booking.getLocalDateTimeOfEvent(), booking);
+        Database.bookings.put(booking.getLocalDateOfEvent(), booking);
         Timer timer = new Timer("RothofBookingTimer");
         timer.scheduleAtFixedRate(
                 rothofBookingTimerTask,
                 Date.from(localDateTimeOfBookingStart.atZone(ZoneId.systemDefault()).toInstant()),
-                300000
+                30000
         );
     }
 
     @Override
-    public boolean deleteBooking(LocalDateTime localDateTimeOfEvent) {
+    public boolean deleteBooking(LocalDate localDateOfEvent) {
         try {
-            Database.bookings.get(localDateTimeOfEvent).getTimerTask().cancel();
-            Database.bookings.remove(localDateTimeOfEvent);
+            Database.bookings.get(localDateOfEvent).getTimerTask().cancel();
+            Database.bookings.remove(localDateOfEvent);
         } catch (Exception e) {
             return false;
         }
