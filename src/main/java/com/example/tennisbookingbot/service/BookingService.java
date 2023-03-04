@@ -1,7 +1,7 @@
-package com.example.blauhofbot.service;
+package com.example.tennisbookingbot.service;
 
-import com.example.blauhofbot.model.Booking;
-import com.example.blauhofbot.utils.Database;
+import com.example.tennisbookingbot.model.Booking;
+import com.example.tennisbookingbot.utils.Database;
 
 import java.time.LocalDate;
 import java.util.HashMap;

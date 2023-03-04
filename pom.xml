@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>blauhof-bot</artifactId>
+    <artifactId>tennis-booking-bot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blauhof-bot</name>
-    <description>blauhof-bot</description>
+    <name>tennis-booking-bot</name>
+    <description>tennis-booking-bot</description>
     <properties>
         <java.version>17</java.version>
     </properties>

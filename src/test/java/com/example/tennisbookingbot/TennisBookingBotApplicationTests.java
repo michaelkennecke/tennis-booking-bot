@@ -1,10 +1,10 @@
-package com.example.blauhofbot;
+package com.example.tennisbookingbot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BlauhofBotApplicationTests {
+class TennisBookingBotApplicationTests {
 
     @Test
     void contextLoads() {

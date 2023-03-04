@@ -1,13 +1,13 @@
-package com.example.blauhofbot;
+package com.example.tennisbookingbot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BlauhofBotApplication {
+public class TennisBookingBotApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BlauhofBotApplication.class, args);
+        SpringApplication.run(TennisBookingBotApplication.class, args);
     }
 
 }

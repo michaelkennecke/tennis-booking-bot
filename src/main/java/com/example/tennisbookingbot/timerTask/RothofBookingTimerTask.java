@@ -1,7 +1,7 @@
-package com.example.blauhofbot.timerTask;
-import com.example.blauhofbot.bot.RothofBookingBot;
-import com.example.blauhofbot.model.Booking;
-import com.example.blauhofbot.utils.Database;
+package com.example.tennisbookingbot.timerTask;
+import com.example.tennisbookingbot.bot.RothofBookingBot;
+import com.example.tennisbookingbot.model.Booking;
+import com.example.tennisbookingbot.utils.Database;
 
 import java.time.LocalDateTime;
 import java.util.TimerTask;
