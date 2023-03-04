@@ -1,7 +1,7 @@
-package com.example.blauhofbot.TimerTask;
-import com.example.blauhofbot.Bot.RothofBookingBot;
-import com.example.blauhofbot.Model.Booking;
-import com.example.blauhofbot.Utils.Database;
+package com.example.blauhofbot.timerTask;
+import com.example.blauhofbot.bot.RothofBookingBot;
+import com.example.blauhofbot.model.Booking;
+import com.example.blauhofbot.utils.Database;
 
 import java.time.LocalDateTime;
 import java.util.TimerTask;
@@ -18,15 +18,13 @@ public class RothofBookingTimerTask extends TimerTask {
     @Override
     public void run() {
         if (LocalDateTime.now().isAfter(this.booking.getLocalDateTimeOfBookingEnd())) {
-            System.out.println("Booking not successful!");
-            Database.bookings.get(this.booking.getLocalDateOfEvent()).setBookingStatus(Booking.BookingStatus.CANCELED);
+            Database.getBooking(this.booking.getLocalDateOfEvent()).setBookingStatus(Booking.BookingStatus.NOT_SUCCESSFUL);
             cancel();
             return;
         }
         boolean isBooked = this.rothofBookingBot.book(this.booking);
         if (isBooked) {
-            System.out.println("Booking successful!");
-            Database.bookings.get(this.booking.getLocalDateOfEvent()).setBookingStatus(Booking.BookingStatus.SUCCESSFUL);
+            Database.getBooking(this.booking.getLocalDateOfEvent()).setBookingStatus(Booking.BookingStatus.SUCCESSFUL);
             cancel();
         }
     }

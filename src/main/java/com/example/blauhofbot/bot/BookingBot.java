@@ -1,7 +1,6 @@
-package com.example.blauhofbot.Bot;
+package com.example.blauhofbot.bot;
 
-import com.example.blauhofbot.Model.Booking;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import com.example.blauhofbot.model.Booking;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -12,13 +11,16 @@ public abstract class BookingBot {
     protected WebDriver driver;
     protected ChromeOptions chromeOptions;
     protected WebDriverWait wait;
+    protected boolean isDryRun;
 
     public BookingBot(Environment environment) {
         this.environment = environment;
-        // WebDriverManager.chromedriver().setup();
         System.setProperty("webdriver.chrome.driver", environment.getProperty("chromium.webdriver.path"));
         this.chromeOptions = new ChromeOptions();
-        this.chromeOptions.addArguments("--headless");
+        this.isDryRun = environment.getProperty("isDryRun", Boolean.class);
+        if (!this.isDryRun) {
+            this.chromeOptions.addArguments("--headless");
+        }
     }
 
     public abstract boolean book(Booking booking);
