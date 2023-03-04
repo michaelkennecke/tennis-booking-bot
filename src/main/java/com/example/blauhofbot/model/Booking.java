@@ -1,43 +1,46 @@
-package com.example.blauhofbot.Model;
+package com.example.blauhofbot.model;
 
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimerTask;
 
-@Component
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 public class Booking {
     private LocalDate localDateOfEvent;
-    private LocalDateTime localDateTimeOfBookingStart;
+    private Optional<LocalDateTime> localDateTimeOfBookingStart;
     private LocalDateTime localDateTimeOfBookingEnd;
     private List<LocalTime> preferences;
     private BookingStatus bookingStatus;
     private TimerTask timerTask;
     private int bookingAttempts;
 
-    @Builder
-    public Booking(LocalDate localDateOfEvent, LocalDateTime localDateTimeOfBookingStart, LocalDateTime localDateTimeOfBookingEnd, List<LocalTime>  preferences, BookingStatus bookingStatus, TimerTask timerTask) {
+    public Booking(LocalDate localDateOfEvent,
+                   Optional<LocalDateTime> localDateTimeOfBookingStart,
+                   LocalDateTime localDateTimeOfBookingEnd,
+                   List<LocalTime> preferences) {
+
         this.localDateOfEvent = localDateOfEvent;
-        this.localDateTimeOfBookingStart = localDateTimeOfBookingStart;
+        if (localDateTimeOfBookingStart.isEmpty()) {
+            this.localDateTimeOfBookingStart = Optional.of(LocalDateTime.now());
+        } else {
+            this.localDateTimeOfBookingStart = localDateTimeOfBookingStart;
+        }
         this.localDateTimeOfBookingEnd = localDateTimeOfBookingEnd;
         this.preferences = preferences;
-
-        this.bookingStatus = bookingStatus;
-        this.timerTask = timerTask;
+        this.bookingStatus = BookingStatus.CREATED;
         this.bookingAttempts = 0;
     }
 
     public enum BookingStatus {
         CREATED,
         SUCCESSFUL,
-        CANCELED
+        NOT_SUCCESSFUL
     }
 }
