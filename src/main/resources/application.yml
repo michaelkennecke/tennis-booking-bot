@@ -1,0 +1,9 @@
+chromium:
+  webdriver:
+    path: "/home/michael/dev/chromedriver"
+
+eversports:
+  username: "mkennecke@icloud.com"
+  password:
+
+isDryRun: true
