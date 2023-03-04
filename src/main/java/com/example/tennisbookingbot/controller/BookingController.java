@@ -1,7 +1,7 @@
-package com.example.blauhofbot.controller;
+package com.example.tennisbookingbot.controller;
 
-import com.example.blauhofbot.model.Booking;
-import com.example.blauhofbot.service.BookingService;
+import com.example.tennisbookingbot.model.Booking;
+import com.example.tennisbookingbot.service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

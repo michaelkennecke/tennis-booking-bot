@@ -1,4 +1,4 @@
-package com.example.blauhofbot.model;
+package com.example.tennisbookingbot.model;
 
 import lombok.*;
 

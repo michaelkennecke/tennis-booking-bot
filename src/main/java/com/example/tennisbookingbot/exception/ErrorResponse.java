@@ -1,4 +1,4 @@
-package com.example.blauhofbot.exception;
+package com.example.tennisbookingbot.exception;
 
 import org.springframework.http.HttpStatus;
 

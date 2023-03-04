@@ -1,9 +1,9 @@
-package com.example.blauhofbot.service;
+package com.example.tennisbookingbot.service;
 
-import com.example.blauhofbot.bot.RothofBookingBot;
-import com.example.blauhofbot.model.Booking;
-import com.example.blauhofbot.timerTask.RothofBookingTimerTask;
-import com.example.blauhofbot.utils.Database;
+import com.example.tennisbookingbot.bot.RothofBookingBot;
+import com.example.tennisbookingbot.model.Booking;
+import com.example.tennisbookingbot.timerTask.RothofBookingTimerTask;
+import com.example.tennisbookingbot.utils.Database;
 import org.springframework.stereotype.Service;
 
 import java.time.*;

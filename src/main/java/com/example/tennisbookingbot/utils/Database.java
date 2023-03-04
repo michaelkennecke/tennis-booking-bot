@@ -1,7 +1,7 @@
-package com.example.blauhofbot.utils;
+package com.example.tennisbookingbot.utils;
 
-import com.example.blauhofbot.exception.NotFoundException;
-import com.example.blauhofbot.model.Booking;
+import com.example.tennisbookingbot.exception.NotFoundException;
+import com.example.tennisbookingbot.model.Booking;
 
 import java.time.LocalDate;
 import java.util.HashMap;

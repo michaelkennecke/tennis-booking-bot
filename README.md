@@ -1,4 +1,4 @@
-# Blauhof Tennis Bot
-This bot is able to automatically book a Grand Slam tennis court!
+# Tennis Booking Bot
+This bot is able to automatically book a tennis courts!
 
 Tbd.

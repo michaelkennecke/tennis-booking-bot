@@ -1,6 +1,6 @@
-package com.example.blauhofbot.bot;
+package com.example.tennisbookingbot.bot;
 
-import com.example.blauhofbot.model.Booking;
+import com.example.tennisbookingbot.model.Booking;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
