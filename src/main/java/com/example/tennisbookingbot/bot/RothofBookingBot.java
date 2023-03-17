@@ -24,19 +24,8 @@ public class RothofBookingBot extends BookingBot {
 
     @Override
     public boolean book(Booking booking) {
-        booking.setBookingAttempts(booking.getBookingAttempts() + 1);
         try {
-            this.openRothofPage();
-            this.acceptCookiesOnRothofPage();
-            this.selectPlayingDate(booking);
-            this.selectFreeCourt(booking);
-            this.switchToOpenedEversportsTab();
-            this.acceptCookiesOnEversportsPage();
-            this.loginOnEversportsPage();
-            this.selectPaymentMethod();
-            if (!this.isDryRun) {
-                this.clickBookNowButton();
-            }
+            this.bookRothofTennisCourt(booking);
         } catch (WebDriverException e) {
             driver.close();
             driver.quit();
@@ -44,6 +33,21 @@ public class RothofBookingBot extends BookingBot {
         }
         driver.quit();
         return true;
+    }
+
+    private void bookRothofTennisCourt(Booking booking) throws WebDriverException {
+        booking.setBookingAttempts(booking.getBookingAttempts() + 1);
+        this.openRothofPage();
+        this.acceptCookiesOnRothofPage();
+        this.selectPlayingDate(booking);
+        this.selectFreeCourt(booking);
+        this.switchToOpenedEversportsTab();
+        this.acceptCookiesOnEversportsPage();
+        this.loginOnEversportsPage();
+        this.selectPaymentMethod();
+        if (!this.isDryRun) {
+            this.clickBookNowButton();
+        }
     }
 
     private void openRothofPage() {
