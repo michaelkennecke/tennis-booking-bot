@@ -5,12 +5,13 @@ import com.example.tennisbookingbot.model.Booking;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 
 public class Database {
     private static HashMap<LocalDate, Booking> bookings = new HashMap<>();
 
-    public static HashMap<LocalDate, Booking> getBookings() {
-        return bookings;
+    public static List<Booking> getBookings() {
+        return bookings.values().stream().toList();
     }
 
     public static Booking getBooking(LocalDate localDateOfEvent) throws NotFoundException {

@@ -1,9 +1,13 @@
-chromium:
-  webdriver:
-    path: "/home/michael/dev/chromedriver"
+server:
+  port: 2271
+
+webdriver:
+  address: "http://localhost:4444"
 
 eversports:
   username: "mkennecke@icloud.com"
-  password:
+  password: 
 
-isDryRun: true
+isDryRun: false
+
+isClaySeason: true

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.*;
 import java.util.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/tennis")
 public class BookingController {
@@ -18,7 +19,7 @@ public class BookingController {
     }
 
     @GetMapping("/bookings")
-    public ResponseEntity<HashMap> getAllBookings() {
+    public ResponseEntity<List<Booking>> getAllBookings() {
         return ResponseEntity.ok()
                 .body(this.bookingService.getBookings());
     }

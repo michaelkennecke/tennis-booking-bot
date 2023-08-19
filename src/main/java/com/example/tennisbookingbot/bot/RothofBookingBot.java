@@ -2,21 +2,25 @@ package com.example.tennisbookingbot.bot;
 
 import com.example.tennisbookingbot.model.Booking;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
 
 @Component
 public class RothofBookingBot extends BookingBot {
     private final String ROTHOF_BOOKING_URL = "https://rothof.de/online-buchen/";
+    private final String[] CLAY_COURTS = {"44643", "44644", "44645", "44646", "44647", "44648", "44649", "44650", "44651", "44652", "44653", "44654"}; 
 
     public RothofBookingBot(Environment environment) {
         super(environment);
@@ -37,6 +41,7 @@ public class RothofBookingBot extends BookingBot {
 
     private void bookRothofTennisCourt(Booking booking) throws WebDriverException {
         booking.setBookingAttempts(booking.getBookingAttempts() + 1);
+        this.startWebdriver();
         this.openRothofPage();
         this.acceptCookiesOnRothofPage();
         this.selectPlayingDate(booking);
@@ -50,8 +55,15 @@ public class RothofBookingBot extends BookingBot {
         }
     }
 
+    private void startWebdriver() {
+        try {
+            this.driver = new RemoteWebDriver(new URL(environment.getProperty("webdriver.address", String.class)), this.chromeOptions);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void openRothofPage() {
-        driver = new ChromeDriver(chromeOptions);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get(ROTHOF_BOOKING_URL);
     }
@@ -133,12 +145,29 @@ public class RothofBookingBot extends BookingBot {
             int endTime = startTime + 1;
             WebElement courtElement;
             try {
-                courtElement = driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime))));
+                if (this.isClaySeason) {
+                    courtElement = this.findFreeClayCourt(startTime, endTime, usDateFormatOEventDate);
+                } else {
+                    courtElement = driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime))));
+                }
             } catch (WebDriverException e) {
                 continue;
             }
             if (courtElement.isDisplayed()) {
                 return courtElement;
+            }
+        }
+        throw new WebDriverException();
+    }
+
+    private WebElement findFreeClayCourt(int startTime, int endTime, String usDateFormatOEventDate) {
+        WebElement courtElement;
+        for (var clayCourt : this.CLAY_COURTS) {
+            try {
+                courtElement = driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s') and contains (@data-court, '%s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime), clayCourt)));
+                return courtElement;
+            } catch (WebDriverException e) {
+                continue;
             }
         }
         throw new WebDriverException();

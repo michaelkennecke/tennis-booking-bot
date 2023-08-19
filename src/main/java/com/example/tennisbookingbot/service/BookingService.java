@@ -4,13 +4,13 @@ import com.example.tennisbookingbot.model.Booking;
 import com.example.tennisbookingbot.utils.Database;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.List;
 
 public abstract class BookingService {
 
     public abstract void createBooking(Booking booking);
 
-    public HashMap<LocalDate, Booking> getBookings() {
+    public List<Booking> getBookings() {
         return Database.getBookings();
     }
 

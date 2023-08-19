@@ -13,7 +13,7 @@ import java.util.Timer;
 @Service
 public class RothofBookingService extends BookingService {
     private final RothofBookingBot rothofBookingBot;
-    private final long BOOKING_ATTEMPTS_RATE_IN_MS = 3000;
+    private final long BOOKING_ATTEMPTS_RATE_IN_MS = 30000;
 
     RothofBookingService(RothofBookingBot rothofBookingBot) {
         this.rothofBookingBot = rothofBookingBot;
