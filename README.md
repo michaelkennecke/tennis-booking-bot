@@ -18,7 +18,7 @@ mvn install -DskipTest
 docker-compose --profile=prod up -d
 ```
 
-## How to develop :hammer_and_pick:
+## How to run for development :hammer_and_pick:
 
 1. Start selenium
 
