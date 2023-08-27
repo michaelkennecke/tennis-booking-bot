@@ -1,0 +1,33 @@
+version: "3"
+services:
+  chrome:
+    container_name: selenium-chrome
+    image: selenium/standalone-chrome:111.0
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    shm_size: "2g"
+    networks:
+      - tennis-booking-bot-network
+    profiles:
+      - dev
+      - prod
+  tennis-booking-bot:
+    container_name: tennis-booking-bot
+    image: tennis-booking-bot:latest
+    build: .
+    ports:
+      - "2271:2271"
+    environment:
+      - "isClaySeason=false"
+      - "isDryRun=false"
+      - "webdriver.address=http://chrome:4444/wd/hub"
+      - "eversports.username="
+      - "eversports.password="
+    networks:
+      - tennis-booking-bot-network
+    profiles:
+      - prod
+networks:
+  tennis-booking-bot-network:
+    driver: bridge

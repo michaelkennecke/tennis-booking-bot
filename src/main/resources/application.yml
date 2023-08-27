@@ -5,9 +5,9 @@ webdriver:
   address: "http://localhost:4444"
 
 eversports:
-  username: "mkennecke@icloud.com"
-  password: 
+  username:
+  password:
 
-isDryRun: false
+isDryRun: true
 
-isClaySeason: true
+isClaySeason: false
