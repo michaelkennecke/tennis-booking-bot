@@ -15,7 +15,7 @@ mvn install -DskipTest
 3. Start the tennis-booking-bot with selenium
 
 ```
-docker-compose up -d
+docker-compose up --profile=prod -d
 ```
 
 ## How to develop :hammer_and_pick:
