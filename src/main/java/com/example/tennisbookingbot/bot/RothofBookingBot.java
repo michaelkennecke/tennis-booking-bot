@@ -15,12 +15,12 @@ import java.util.List;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.openqa.selenium.support.ui.ExpectedConditions.numberOfWindowsToBe;
-
 @Component
 public class RothofBookingBot extends BookingBot {
-    private final String ROTHOF_BOOKING_URL = "https://rothof.de/online-buchen/";
-    private final String[] CLAY_COURTS = {"44643", "44644", "44645", "44646", "44647", "44648", "44649", "44650", "44651", "44652", "44653", "44654"}; 
+    private static final String ROTHOF_BOOKING_URL = "https://eversports.de/widget/w/jmjffr";
+    private static final String[] CLAY_COURTS = { "44643", "44644", "44645", "44646", "44647", "44648", "44649",
+            "44650",
+            "44651", "44652", "44653", "44654" };
 
     public RothofBookingBot(Environment environment) {
         super(environment);
@@ -42,11 +42,9 @@ public class RothofBookingBot extends BookingBot {
     private void bookRothofTennisCourt(Booking booking) throws WebDriverException {
         booking.setBookingAttempts(booking.getBookingAttempts() + 1);
         this.startWebdriver();
-        this.openRothofPage();
-        this.acceptCookiesOnRothofPage();
+        this.openBookingPage();
         this.selectPlayingDate(booking);
         this.selectFreeCourt(booking);
-        this.switchToOpenedEversportsTab();
         this.acceptCookiesOnEversportsPage();
         this.loginOnEversportsPage();
         this.selectPaymentMethod();
@@ -57,53 +55,39 @@ public class RothofBookingBot extends BookingBot {
 
     private void startWebdriver() {
         try {
-            this.driver = new RemoteWebDriver(new URL(environment.getProperty("webdriver.address", String.class)), this.chromeOptions);
+            this.driver = new RemoteWebDriver(new URL(environment.getProperty("webdriver.address", String.class)),
+                    this.chromeOptions);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }
 
-    private void openRothofPage() {
+    private void openBookingPage() {
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get(ROTHOF_BOOKING_URL);
-    }
-
-    private void acceptCookiesOnRothofPage() {
-        WebElement cookiesElement = driver.findElement(By.id("CookieBoxSaveButton"));
-        cookiesElement.click();
+        driver.get(RothofBookingBot.ROTHOF_BOOKING_URL);
     }
 
     private void selectPlayingDate(Booking booking) {
-        driver.switchTo().frame(driver.findElement(By.tagName("iFrame")));
         WebElement datepickerElement = driver.findElement(By.id("datepicker"));
         datepickerElement.click();
         datepickerElement.clear();
         datepickerElement.sendKeys(
                 booking.getLocalDateOfEvent().getDayOfMonth() + "/" +
                         booking.getLocalDateOfEvent().getMonthValue() + "/" +
-                        booking.getLocalDateOfEvent().getYear()
-        );
+                        booking.getLocalDateOfEvent().getYear());
         datepickerElement.sendKeys(Keys.RETURN);
     }
 
     private void selectFreeCourt(Booking booking) {
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[@data-original-title='Free | 23:00 - 00:00']")));
+        wait.until(
+                ExpectedConditions.elementToBeClickable(By.xpath("//td[@data-original-title='Free | 23:00 - 00:00']")));
         WebElement courtElement = this.getFreeCourt(booking.getPreferences(), booking.getLocalDateOfEvent().toString());
         courtElement.click();
     }
 
-    private void switchToOpenedEversportsTab() {
-        wait.until(numberOfWindowsToBe(2));
-        String originalWindow = driver.getWindowHandle();
-        for (String windowHandle : driver.getWindowHandles()) {
-            if (!originalWindow.contentEquals(windowHandle)) {
-                driver.switchTo().window(windowHandle);
-                break;
-            }
-        }
-    }
-
     private void acceptCookiesOnEversportsPage() {
+        wait.until(
+                ExpectedConditions.elementToBeClickable(By.xpath("//button[@data-testid='accept-all-cookies']")));
         WebElement cookies = driver.findElement(By.xpath("//button[@data-testid='accept-all-cookies']"));
         cookies.click();
     }
@@ -130,12 +114,14 @@ public class RothofBookingBot extends BookingBot {
     }
 
     private void selectPaymentMethod() {
-        WebElement paymentElement = wait.until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue']")));
+        WebElement paymentElement = wait
+                .until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue']")));
         paymentElement.click();
     }
 
     private void clickBookNowButton() {
-        WebElement bookNowElement = wait.until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue-with-cash']")));
+        WebElement bookNowElement = wait
+                .until(webDriver -> webDriver.findElement(By.xpath("//button[@data-testid='continue-with-cash']")));
         bookNowElement.click();
     }
 
@@ -148,7 +134,9 @@ public class RothofBookingBot extends BookingBot {
                 if (this.isClaySeason) {
                     courtElement = this.findFreeClayCourt(startTime, endTime, usDateFormatOEventDate);
                 } else {
-                    courtElement = driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime))));
+                    courtElement = driver.findElement(By.xpath(String.format(
+                            "//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s')]",
+                            usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime))));
                 }
             } catch (WebDriverException e) {
                 continue;
@@ -162,9 +150,11 @@ public class RothofBookingBot extends BookingBot {
 
     private WebElement findFreeClayCourt(int startTime, int endTime, String usDateFormatOEventDate) {
         WebElement courtElement;
-        for (var clayCourt : this.CLAY_COURTS) {
+        for (var clayCourt : RothofBookingBot.CLAY_COURTS) {
             try {
-                courtElement = driver.findElement(By.xpath(String.format("//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s') and contains (@data-court, '%s')]", usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime), clayCourt)));
+                courtElement = driver.findElement(By.xpath(String.format(
+                        "//td[contains(@data-date, '%s') and contains (@data-original-title, 'Free | %s - %s') and contains (@data-court, '%s')]",
+                        usDateFormatOEventDate, this.timeAsText(startTime), this.timeAsText(endTime), clayCourt)));
                 return courtElement;
             } catch (WebDriverException e) {
                 continue;

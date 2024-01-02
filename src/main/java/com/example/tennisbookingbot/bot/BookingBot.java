@@ -15,11 +15,8 @@ public abstract class BookingBot {
     protected boolean isDryRun;
     protected boolean isClaySeason;
 
-    public BookingBot(Environment environment) {
+    protected BookingBot(Environment environment) {
         this.environment = environment;
-        System.out.println("IsDryRun: " + environment.getProperty("isDryRun", Boolean.class));
-        System.out.println("IsClaySeason: " + environment.getProperty("isClaySeason", Boolean.class));
-        System.out.println("Webdriver: " + environment.getProperty("webdriver.address"));
         this.isDryRun = environment.getProperty("isDryRun", Boolean.class);
         this.isClaySeason = environment.getProperty("isClaySeason", Boolean.class);
         this.chromeOptions = new ChromeOptions();
